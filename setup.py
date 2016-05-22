@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='django_bootstrap3_daterangepicker',
-    version='1.0.0b2',
+    version='1.0.0b3',
 
     description='Django date range form field',
     long_description=long_description,
@@ -40,9 +40,5 @@ setup(
     keywords='django daterange picker',
     packages=['django_bootstrap3_daterangepicker'],
     install_requires=['django'],
-
-    package_data={'django_bootstrap3_daterangepicker': [
-        'static/django_bootstrap3_daterangepicker/daterangepicker/*',
-        'static/django_bootstrap3_daterangepicker/momentjs/*',
-    ]},
+    include_package_data=True,
 )
