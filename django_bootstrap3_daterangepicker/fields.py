@@ -4,7 +4,7 @@ from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.translation import string_concat
 
-from bootstrap3_daterangepicker.widgets import DateRangeWidget
+from .widgets import DateRangeWidget
 
 
 class DateRangeField(forms.Field):
