@@ -26,12 +26,12 @@ class DateRangeField(forms.Field):
             try:
                 part1 = self.base.to_python(parts[0])
             except ValidationError as e:
-                raise ValidationError(string_concat('Ошибка в начале периода: ', e.message), e.code)
+                raise ValidationError(string_concat('Error in period beginning: ', e.message), e.code)
 
             try:
                 part2 = self.base.to_python(parts[1])
             except ValidationError as e:
-                raise ValidationError(string_concat('Ошибка в конце периода: ', e.message), e.code)
+                raise ValidationError(string_concat('Error in period end: ', e.message), e.code)
 
             return part1, part2
         else:

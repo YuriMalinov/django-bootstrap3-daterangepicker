@@ -1,8 +1,8 @@
 # django-bootstrap3-daterangepicker
 
-This is django field wrapper for http://www.daterangepicker.com/ . Usefull for reporting services.
+This is django field wrapper for http://www.daterangepicker.com/ . Useful for reporting services.
 
-Field data format is tuple (startdate, enddate).
+Field data format is tuple (start_date, end_date).
 
 Usage:
 * jQuery, Bootstrap are required on target page
