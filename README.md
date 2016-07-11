@@ -4,7 +4,15 @@ This is django field wrapper for http://www.daterangepicker.com/ . Useful for re
 
 Field data format is tuple (start_date, end_date).
 
+Installation:
+---
+
+1. ```pip install django_bootstrap3_daterangepicker```
+2. add `'django_bootstrap3_daterangepicker'` to `INSTALLED_APPS`
+
+
 Usage:
+----
 * jQuery, Bootstrap are required on target page
 
 ```python
