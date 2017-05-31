@@ -1,5 +1,7 @@
 import json
 import re
+import calendar
+
 from collections import OrderedDict
 
 from datetime import date, datetime, timedelta
@@ -22,26 +24,33 @@ format_to_js_re = re.compile(r'(?<!\w)(' + '|'.join(format_to_js.keys()) + r')\b
 
 
 def add_month(target_date, months):
-    year, month = divmod(target_date.month + months, 12)
+    year_diff, month = divmod(target_date.month + months, 12)
     if month == 0:
         month = 12
-        year -= 1
-    return date(target_date.year + year, month, target_date.day)
+        year_diff -= 1
+
+
+    days_next = calendar.monthrange(target_date.year + year_diff, month)[1]
+    day = target_date.day
+    if day > days_next:
+        day = days_next
+
+    return date(target_date.year + year_diff, month, day)
 
 
 def common_dates():
     today = date.today()
     one_day = timedelta(days=1)
     return OrderedDict([
-        ('Today', (today, today)),
-        ('Yesterday', (today - one_day, today - one_day)),
-        ('This week', (today - timedelta(days=today.weekday()), today)),
-        ('Last week', (today - timedelta(days=today.weekday() + 7), today - timedelta(days=today.weekday() + 1))),
-        ('Week ago', (today - timedelta(days=7), today)),
-        ('This month', (today.replace(day=1), add_month(today, 1) - one_day)),
-        ('Last month', (add_month(today.replace(day=1), -1), today.replace(day=1) - one_day)),
-        ('3 months', (add_month(today, -3), today)),
-        ('Year', (add_month(today, -12), today)),
+        ('Today', lambda today: (today, today)),
+        ('Yesterday', lambda today: (today - one_day, today - one_day)),
+        ('This week', lambda today: (today - timedelta(days=today.weekday()), today)),
+        ('Last week', lambda today: (today - timedelta(days=today.weekday() + 7), today - timedelta(days=today.weekday() + 1))),
+        ('Week ago', lambda today: (today - timedelta(days=7), today)),
+        ('This month', lambda today: (today.replace(day=1), today)),
+        ('Last month', lambda today: (add_month(today.replace(day=1), -1), today.replace(day=1) - one_day)),
+        ('3 months', lambda today: (add_month(today, -3), today)),
+        ('Year', lambda today: (add_month(today, -12), today)),
     ])
 
 
@@ -99,6 +108,12 @@ class DateRangeWidget(forms.TextInput):
 
         picker_options = self.picker_options if not callable(self.picker_options) else self.picker_options()
         options.update(picker_options)
+        if 'ranges' in options:
+            ranges = OrderedDict(options['ranges'])
+            for k, v in ranges.items():
+                if callable(v):
+                    ranges[k] = v(datetime.today())
+            options['ranges'] = ranges
 
         options_js = json.dumps(options, default=convert_dates, indent="    ")
 
