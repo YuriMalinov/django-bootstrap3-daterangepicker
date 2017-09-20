@@ -7,12 +7,8 @@ from django.utils.translation import string_concat
 from .widgets import DateRangeWidget
 
 
-class DateRangeField(forms.Field):
+class DateRangeField(forms.DateField):
     widget = DateRangeWidget
-
-    def __init__(self, base=forms.DateField(), **kwargs):
-        super(DateRangeField, self).__init__(**kwargs)
-        self.base = base
 
     def to_python(self, value):
         # Try to coerce the value to unicode.
@@ -24,12 +20,12 @@ class DateRangeField(forms.Field):
             parts = value.split(self.widget.separator, 2)
 
             try:
-                part1 = self.base.to_python(parts[0])
+                part1 = super().to_python(parts[0])
             except ValidationError as e:
                 raise ValidationError(string_concat('Error in period beginning: ', e.message), e.code)
 
             try:
-                part2 = self.base.to_python(parts[1])
+                part2 = super().to_python(parts[1])
             except ValidationError as e:
                 raise ValidationError(string_concat('Error in period end: ', e.message), e.code)
 
