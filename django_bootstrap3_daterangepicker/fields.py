@@ -7,8 +7,18 @@ from django.utils.translation import string_concat, gettext_lazy as _
 from .widgets import DateRangeWidget
 
 
-class DateRangeField(forms.DateField):
+class DateRangeField(forms.Field):
     widget = DateRangeWidget
+
+    def __init__(self, base=forms.DateField(), input_formats=None, **kwargs):
+        """
+        :param base: can be either DateField or DateTimeField, which will be used to do conversions for beginning and end of interval.
+        :param input_formats: is passed into base if present
+        """
+        super(DateRangeField, self).__init__(**kwargs)
+        self.base = base
+        if input_formats is not None:
+            self.base.input_formats = input_formats
 
     def to_python(self, value):
         # Try to coerce the value to unicode.
@@ -24,12 +34,12 @@ class DateRangeField(forms.DateField):
             str_dates = value.split(self.widget.separator, 2)
 
             try:
-                beginning = super().to_python(str_dates[0])
+                beginning = self.base.to_python(str_dates[0])
             except ValidationError as e:
                 raise ValidationError(string_concat('Error in period beginning: ', e.message), e.code)
 
             try:
-                end = super().to_python(str_dates[1])
+                end = self.base.to_python(str_dates[1])
             except ValidationError as e:
                 raise ValidationError(string_concat('Error in period end: ', e.message), e.code)
 
