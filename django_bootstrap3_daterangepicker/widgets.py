@@ -117,9 +117,9 @@ class DateRangeWidget(forms.TextInput):
 
         options_js = json.dumps(options, default=convert_dates, indent="    ")
 
+        attrs = self.build_attrs(self.attrs, attrs)
         script = self.script_template.format(id=attrs['id'], options=options_js)
 
-        attrs = attrs or {}
         if 'class' not in attrs:
             attrs['class'] = 'form-control'
         return mark_safe(super(DateRangeWidget, self).render(name, value, attrs) + script)
